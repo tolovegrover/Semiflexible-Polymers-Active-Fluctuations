@@ -1,0 +1,188 @@
+# Polymer only
+# Polymer with harmonic bonds and cosine bending rigidity
+
+
+variable Temp equal 1.0
+
+variable mass equal 1.0
+variable sigma equal 1.0
+variable sigmax equal ${sigma}
+variable sigmay equal ${sigma}
+variable sigmaz equal ${sigma}
+variable piby4 equal PI/4.0
+variable area equal ${piby4}*${sigma}^2
+variable rho equal ${mass}/${area}
+
+variable friction equal 10.0
+
+variable damp equal ${mass}/${friction}
+
+variable endn equal 64
+
+variable activity equal 4
+variable angmom equal 3.3333333
+
+variable Lx equal 2*${endn}
+variable Ly equal 2*${endn}
+
+variable kappa equal 64
+
+variable timesteps equal 0.002
+
+variable randIntone equal 9876543
+variable randInttwo equal 8932532
+variable randIntthree equal 3255636
+variable randIntfour equal 5436543
+
+
+dimension 2
+boundary p p p
+units lj
+
+atom_style hybrid molecular ellipsoid
+
+neighbor 1.0 bin
+neigh_modify every 1 delay 0 check yes
+atom_modify sort 0 0
+comm_modify mode single cutoff 2.8
+
+
+variable frac equal 0.3
+variable active_atoms equal floor(${Lx}*${Ly}*${frac}/${rho})
+region box block 0 ${Lx} 0 ${Ly} -0.01 0.01
+read_data chain/${endn}.in
+#create_box 2 box
+create_atoms 2 random ${active_atoms} ${randIntone} box
+
+group polymer type 1
+group active type 2
+group first id 1
+group last id ${endn}
+
+set group all shape ${sigmax} ${sigmay} ${sigmaz}
+set group all quat/random ${randInttwo}
+set group all density ${rho}
+
+# Simple repulsive LJ
+# Excluded volume
+variable cut equal 1.12246204830937
+variable epsilon equal 10.0
+pair_style lj/cut ${cut}
+#cutoff 2^(1/6) because considering only repulsion
+pair_coeff * * ${epsilon} ${sigma} ${cut}
+# epsilon sigma cutoff
+pair_modify shift yes
+
+# Harmonic Bonds
+variable bondharparam equal 1000
+bond_style harmonic
+bond_coeff * ${bondharparam} ${cut}
+#U_b=\epsilon_b(r-r_0)^2
+#\epsilon_b=1000k_BT/\sigma^2
+#r_0=2^1/6\sigma
+special_bonds lj 0.0 1.0 1.0
+
+# cosine angles
+angle_style cosine
+angle_coeff * ${kappa}
+
+# Mass settings
+mass * ${mass}
+
+# Remove initial overlap:
+minimize 1e-4 1e-6 10000 1000000
+reset_timestep 0
+
+# Fix for time integration
+fix integrator polymer nve
+fix integrator2 active nve/asphere
+
+# thermostat: Langevin
+fix temp_polymer polymer langevin ${Temp} ${Temp} ${damp} ${randIntthree}
+fix temp_active active langevin ${Temp} ${Temp} ${damp} ${randIntfour} angmom ${angmom}
+
+fix active_force active propel/self quat ${activity}
+
+fix run2d all enforce2d
+
+variable ts equal ${timesteps}*step
+
+
+
+# Compute Heat flux
+compute polymertemp polymer temp
+compute polymerKE polymer ke/atom
+compute polymerPE polymer pe/atom
+compute polymerstress polymer stress/atom polymertemp virial
+compute heatfluxpolymer polymer heat/flux polymerKE polymerPE polymerstress
+
+# Computue Radius of gyration, MSD of polymer, Temperature of polymer
+compute rg polymer gyration
+compute msdcomp polymer msd
+
+# Average Bond length
+compute bondproperties polymer property/local btype batom1 batom2
+compute blength polymer bond/local dist dx dy engpot
+compute avgblength polymer reduce ave c_blength[1] inputs local
+
+# Average cos(theta)
+variable t internal 0.0
+variable cos equal cos(v_t)
+# continue ...
+compute angleproperties polymer property/local atype aatom1 aatom2 aatom3
+compute phi polymer angle/local theta eng v_cos set theta t
+compute averagecostheta polymer reduce ave c_phi[3] inputs local
+
+# End to end distance calculations
+variable endtoend equal sqrt((xcm(first,x)-xcm(last,x))^2+(xcm(first,y)-xcm(last,y))^2)
+
+# Compute Force due to active particles
+compute atomIDs all property/local patom1 patom2 ptype1 ptype2
+compute pairForce all pair/local fx fy
+
+# Thermo
+thermo_style custom step v_ts v_endtoend c_rg c_msdcomp[4] c_polymertemp c_avgblength c_averagecostheta temp pe ebond eangle
+thermo_modify flush yes 
+
+# Some output:
+thermo 1000000
+
+dump polymertrajdump polymer custom 10000 position/position.${endn}_${kappa}_${activity}_${damp}_${frac}_${angmom}_${randIntone}_${randInttwo}_${randIntthree}_${randIntfour}.dump id xu yu x y vx vy fx fy c_polymerstress[1] c_polymerstress[2] c_polymerstress[4] 
+dump polymerbondvectorsdump polymer local 10000 bondvector/${endn}_${kappa}_${activity}_${damp}_${frac}_${angmom}_${randIntone}_${randInttwo}_${randIntthree}_${randIntfour}.bond.dump c_bondproperties[2] c_bondproperties[3] c_blength[2] c_blength[3]
+dump polymerangledmp polymer local 10000 angleenergy/${endn}_${kappa}_${activity}_${damp}_${frac}_${angmom}_${randIntone}_${randInttwo}_${randIntthree}_${randIntfour}.angle.dump c_angleproperties[3] c_phi[1] c_phi[2]
+dump forcedump polymer local 10000 force/${endn}_${kappa}_${activity}_${damp}_${frac}_${angmom}_${randIntone}_${randInttwo}_${randIntthree}_${randIntfour}.force.dump c_atomIDs[1] c_atomIDs[2] c_atomIDs[3] c_atomIDs[4] c_pairForce[1] c_pairForce[2]
+
+variable reavcos equal c_avgcos
+variable chainlength equal c_avgbondlen*${endn}
+variable radiusg equal c_rg
+variable radiusgxx equal c_rg[1]
+variable radiusgyy equal c_rg[2]
+variable radiusgxy equal c_rg[4]
+variable msd equal c_msdcomp[4]
+variable msdx equal c_msdcomp[1]
+variable msdy equal c_msdcomp[2]
+variable avblength equal c_avgblength
+variable avcostheta equal c_averagecostheta
+
+#variable temp1 equal c_activetemp
+variable temp2 equal c_polymertemp
+
+fix 3 polymer print 1000 "${ts} ${endtoend}" file endtoend/${endn}_${kappa}_${activity}_${damp}_${frac}_${angmom}_${randIntone}_${randInttwo}_${randIntthree}_${randIntfour}.endtoend screen no
+fix 6 polymer print 1000 "${ts} ${radiusg} ${radiusgxx} ${radiusgyy} ${radiusgxy}" file rg/${endn}_${kappa}_${activity}_${damp}_${frac}_${angmom}_${randIntone}_${randInttwo}_${randIntthree}_${randIntfour}.rg screen no
+fix 7 polymer print 1000 "${ts} ${msd} ${msdx} ${msdy}" file msd/${endn}_${kappa}_${activity}_${damp}_${frac}_${angmom}_${randIntone}_${randInttwo}_${randIntthree}_${randIntfour}.msd screen no
+fix 8 polymer print 1000 "${ts} ${temp2}" file temp/${endn}_${kappa}_${activity}_${damp}_${frac}_${angmom}_${randIntone}_${randInttwo}_${randIntthree}_${randIntfour}.temp screen no
+fix 9 polymer print 1000 "${ts} ${avblength} ${avcostheta}" file bondangle/${endn}_${kappa}_${activity}_${damp}_${frac}_${angmom}_${randIntone}_${randInttwo}_${randIntthree}_${randIntfour}.bondangle screen no
+
+log log/${endn}_${kappa}_${activity}_${damp}_${frac}_${angmom}_${randIntone}_${randInttwo}_${randIntthree}_${randIntfour}.log
+
+
+
+
+
+timestep ${timesteps}
+run 100000000
+
+write_data rewritedata/ts.${ts}.N.${endn}.kappa.${kappa}.activity.${activity}_damp_${damp}_${frac}_${angmom}_${randIntone}_${randInttwo}_${randIntthree}_${randIntfour}.in
+write_restart rewritedata/ts.${ts}.N.${endn}.kappa.${kappa}.activity.${activity}_damp_${damp}_${frac}_${angmom}_${randIntone}_${randInttwo}_${randIntthree}_${randIntfour}.restart
+
+
