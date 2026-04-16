@@ -41,7 +41,7 @@ def load_data(file_path):
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    data_file = os.path.join(script_dir, "bond_fluctuation_variances.txt")
+    data_file = os.path.join(script_dir, "../data/bond_fluctuation_variances.txt")
     
     if not os.path.exists(data_file):
         print(f"Waiting for {data_file} to be generated...")
@@ -64,7 +64,7 @@ def main():
     cmap = plt.get_cmap('jet') # Match the colormap used in the reference script
     
     # --- 1. Fixed Tau, Varying Activity ---
-    # Will generate Plot_BondFluc_FixedTau_{tau}.pdf
+    # Will generate ../plots/Plot_BondFluc_FixedTau_{tau}.pdf
     grouped = df.groupby(['Tau', 'Activity'])
     
     for tau in unique_taus:
@@ -123,11 +123,11 @@ def main():
         ax.tick_params(direction='in', which='both')
         
         plt.tight_layout()
-        plt.savefig(os.path.join(script_dir, f'Plot_BondFluc_FixedTau_{tau:g}.pdf'), format='pdf', bbox_inches='tight')
+        plt.savefig(os.path.join(script_dir, f'../plots/Plot_BondFluc_FixedTau_{tau:g}.pdf'), format='pdf', bbox_inches='tight')
         plt.close()
 
     # --- 2. Fixed Activity, Varying Tau ---
-    # Will generate Plot_BondFluc_FixedAct_{act}.pdf
+    # Will generate ../plots/Plot_BondFluc_FixedAct_{act}.pdf
     for act in unique_acts:
         if act == 0: continue
         act_taus = [tau for tau in unique_taus if (tau, act) in grouped.groups and tau != 0.1]
@@ -182,7 +182,7 @@ def main():
         ax.tick_params(direction='in', which='both')
         
         plt.tight_layout()
-        plt.savefig(os.path.join(script_dir, f'Plot_BondFluc_FixedAct_{act:g}.pdf'), format='pdf', bbox_inches='tight')
+        plt.savefig(os.path.join(script_dir, f'../plots/Plot_BondFluc_FixedAct_{act:g}.pdf'), format='pdf', bbox_inches='tight')
         plt.close()
         
     # --- 3. Total Fluctuation Variance vs Activity ---
@@ -225,7 +225,7 @@ def main():
         ax.tick_params(direction='in', top=False, right=False)
         
         plt.tight_layout()
-        plt.savefig(os.path.join(script_dir, "Plot_BondFluc_TotalVar_vs_Act.pdf"), format='pdf', bbox_inches='tight')
+        plt.savefig(os.path.join(script_dir, "../plots/Plot_BondFluc_TotalVar_vs_Act.pdf"), format='pdf', bbox_inches='tight')
         plt.close()
 
     # --- 4. 0th Mode Variance vs Activity ---
@@ -255,11 +255,11 @@ def main():
         ax.tick_params(direction='in', top=False, right=False)
         
         plt.tight_layout()
-        plt.savefig(os.path.join(script_dir, "Plot_BondFluc_TotalLengthVar_vs_Act.pdf"), format='pdf', bbox_inches='tight')
+        plt.savefig(os.path.join(script_dir, "../plots/Plot_BondFluc_TotalLengthVar_vs_Act.pdf"), format='pdf', bbox_inches='tight')
         plt.close()
 
     # --- 5. Average Bond Length vs Activity with Variance Errorbars ---
-    blen_file = os.path.join(script_dir, "bondlength_averaged.txt")
+    blen_file = os.path.join(script_dir, "../data/bondlength_averaged.txt")
     if os.path.exists(blen_file) and not df_0th.empty:
         # Load average bond length data
         blen_data = []
@@ -314,7 +314,7 @@ def main():
             ax.tick_params(direction='in', top=False, right=False)
             
             plt.tight_layout()
-            plt.savefig(os.path.join(script_dir, "Plot_AvgBondLength_with_FluctuationErr_vs_Act.pdf"), format='pdf', bbox_inches='tight')
+            plt.savefig(os.path.join(script_dir, "../plots/Plot_AvgBondLength_with_FluctuationErr_vs_Act.pdf"), format='pdf', bbox_inches='tight')
             plt.close()
 
     print("Successfully generated all plots based on plot_and_fit_modes.py styling.")

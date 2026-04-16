@@ -49,7 +49,7 @@ def active_func(x, A, C, D, E):
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    data_file = os.path.join(script_dir, "tangent_mode_variances.txt")
+    data_file = os.path.join(script_dir, "../data/tangent_mode_variances.txt")
     
     if not os.path.exists(data_file):
         print(f"Error: {data_file} not found.")
@@ -141,7 +141,7 @@ def main():
     # Save parameters
     if fit_results:
         results_df = pd.DataFrame(fit_results)
-        results_df.to_csv(os.path.join(script_dir, "MSD_Fit_Parameters.csv"), index=False)
+        results_df.to_csv(os.path.join(script_dir, "../data/MSD_Fit_Parameters.csv"), index=False)
         print("Exported fitting parameters to MSD_Fit_Parameters.csv")
     
     # --- Generate Plots ---
@@ -191,7 +191,7 @@ def main():
         ax.tick_params(direction='in', which='both')
         
         plt.tight_layout()
-        plt.savefig(os.path.join(script_dir, f'Plot_FixedTau_{tau:g}.pdf'), format='pdf', bbox_inches='tight')
+        plt.savefig(os.path.join(script_dir, f'../plots/Plot_FixedTau_{tau:g}.pdf'), format='pdf', bbox_inches='tight')
         plt.close()
 
     # 2. Fixed Activity, Varying Tau
@@ -235,7 +235,7 @@ def main():
         ax.tick_params(direction='in', which='both')
         
         plt.tight_layout()
-        plt.savefig(os.path.join(script_dir, f'Plot_FixedAct_{act:g}.pdf'), format='pdf', bbox_inches='tight')
+        plt.savefig(os.path.join(script_dir, f'../plots/Plot_FixedAct_{act:g}.pdf'), format='pdf', bbox_inches='tight')
         plt.close()
 
     print("Success! All PDFs generated.")

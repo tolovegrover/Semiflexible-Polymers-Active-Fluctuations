@@ -21,7 +21,7 @@ from matplotlib.lines import Line2D
 # ============================================================
 #  CONFIG  --  change only these paths to port to another kappa
 # ============================================================
-KAPPA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
+KAPPA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../data/")
 
 RG_AVG_FILE     = os.path.join(KAPPA_DIR, "rg_averaged_from_folder.txt")
 COV_MATRIX_FILE = os.path.join(KAPPA_DIR, "covariance_reconstruction",
@@ -258,7 +258,7 @@ def main():
 
     fig.tight_layout()
 
-    out_path = os.path.join(out_dir, 'Rg_Reconstruction_AllTaus_TwoColumn.pdf')
+    out_path = os.path.join(out_dir, '../../plots/Rg_Reconstruction_AllTaus_TwoColumn.pdf')
     fig.savefig(out_path, format='pdf', dpi=600, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved: {out_path}")

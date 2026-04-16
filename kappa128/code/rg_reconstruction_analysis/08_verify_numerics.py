@@ -30,7 +30,7 @@ def build_W_matrix(N=63):
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    matrix_file = os.path.join(script_dir, "..", "covariance_reconstruction", "tangent_covariance_matrices.txt")
+    matrix_file = os.path.join(script_dir, "../../data/covariance_reconstruction/tangent_covariance_matrices.txt")
     
     if not os.path.exists(matrix_file):
         print(f"Error: {matrix_file} not found.")
