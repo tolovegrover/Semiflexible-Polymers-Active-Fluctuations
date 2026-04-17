@@ -1,0 +1,2 @@
+# Ensemble Averaged Rg data from last 20% of runs
+# Tau Activity Average_Rg

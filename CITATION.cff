@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software or data, please cite it as below."
+authors:
+  - family-names: "Grover"
+    given-names: "Love"
+    affiliation: "Indian Institute of Science Education and Research Mohali"
+  - family-names: "Dasanna"
+    given-names: "Anil Kumar"
+    affiliation: "Indian Institute of Science Education and Research Mohali"
+  - family-names: "Chaudhuri"
+    given-names: "Abhishek"
+    affiliation: "Indian Institute of Science Education and Research Mohali"
+title: "Spectral Signatures of Active Fluctuations in Semiflexible Polymers"
+version: 1.0.0
+date-released: 2026-04-17
+url: "https://github.com/tolovegrover/Semiflexible-Polymers-Active-Fluctuations"
+notes: "Work in preparation."

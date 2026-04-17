@@ -14,17 +14,32 @@ In active matter, the concept of a single "effective temperature" often fails be
 4.  **Theoretical Fitting**: We fit the variance spectrum to a reduced colored-noise theory to extract effective persistence times and forcing strengths.
 5.  **Reconstruction**: We use the full mode covariance matrix $C_{nm} = \langle a_n a_m \rangle$ to reconstruct global observables like the Radius of Gyration ($R_g$).
 
-### Key Finding
-Activity does **not** act as a uniform heat source. It selectively enhances **low-mode** (long-wavelength) fluctuations. The "persistence time" ($\tau$) of the bath acts as a spectral selection parameter: increasing $\tau$ shifts the spectral weight toward progressively longer wavelengths.
+---
+
+## Installation & Requirements
+
+The analysis pipeline requires Python 3 and several scientific libraries. 
+
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/tolovegrover/Semiflexible-Polymers-Active-Fluctuations.git
+    cd Semiflexible-Polymers-Active-Fluctuations
+    ```
+2.  **Install dependencies**:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 ---
 
 ## Directory Structure
-- `simulation_setup/`: LAMMPS input scripts and cluster submission automation.
+- `simulation_setup/`: LAMMPS input scripts and cluster submission automation for HPC environments.
 - `kappa32/` & `kappa128/`: System-specific folders.
     - `data/`: Processed numerical datasets.
-    - `plots/`: Final PDF figures used in the paper.
+    - `plots/`: Final PDF figures.
     - `code/`: Sequential Python scripts and `run_pipeline.sh`.
+- `reproduce_all.sh`: Root script to run all analysis for all systems.
+- `CITATION.cff`: Citation metadata.
 
 ---
 
@@ -65,13 +80,28 @@ Activity does **not** act as a uniform heat source. It selectively enhances **lo
 
 ## How to Reproduce Results
 
-1.  **Navigate to a system**: `cd kappa32/code`
-2.  **Run the pipeline**: `./run_pipeline.sh`
-3.  **View Plots**: The figures will be generated/updated in the `../plots/` directory.
+To run the entire analysis pipeline and regenerate all plots for both $\kappa=32$ and $\kappa=128$:
+```bash
+./reproduce_all.sh
+```
 
-## Simulation Setup
-To regenerate raw data:
+Alternatively, you can run analysis for a specific system:
+```bash
+cd kappa32/code
+./run_pipeline.sh
+```
+
+## Citation
+If you use this data or code in your research, please cite the following work:
+> **L. Grover, A. K. Dasanna, and A. Chaudhuri.** "Spectral Signatures of Active Fluctuations in Semiflexible Polymers". (In preparation).
+
+---
+
+## Simulation Setup (HPC Requirements)
+To regenerate raw data, access to a **High-Performance Computing (HPC)** cluster with a PBS job scheduler is required.
 1. Ensure `in.explicitactivebathpolymer.lmp` (template) is present in your simulation directory.
 2. Run `./generate_pre.sh` to create parameterized LAMMPS input files.
 3. Run `python3 binpack_commands.py` to group simulations into efficient 32-core batches.
-4. Run `./run_jobs.sh` to generate PBS scripts and submit to your cluster.
+4. Run `./run_jobs.sh` to generate PBS scripts and submit to the HPC cluster queue.
+
+Requires **LAMMPS** with appropriate packages installed on the cluster.
