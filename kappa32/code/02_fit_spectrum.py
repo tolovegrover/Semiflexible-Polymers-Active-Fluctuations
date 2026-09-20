@@ -61,7 +61,7 @@ def main():
         print("No valid variance data found. Please ensure raw dump files exist in the position folder.")
         return
         
-    # We fit over n >= 1, max_modes is typically 32 in the MATLAB script. Let's use up to 32 here.
+    # Fit over modes 1 <= n <= 32
     max_modes = 32
     df = df[(df['n'] >= 1) & (df['n'] <= max_modes)]
     
@@ -144,8 +144,7 @@ def main():
         results_df.to_csv(os.path.join(script_dir, "../data/MSD_Fit_Parameters.csv"), index=False)
         print("Exported fitting parameters to MSD_Fit_Parameters.csv")
     
-    # --- Generate Plots ---
-    # Turbo colormap equivalent for older matplotlib
+    # Colormap for parameter curves
     cmap = plt.get_cmap('jet')
     
     # 1. Fixed Tau, Varying Activity
@@ -155,7 +154,6 @@ def main():
         
         plt.figure(figsize=(fig_width, fig_height))
         
-        # Plot Passive
         # Plot Passive
         if (tau, 0) in data_struct:
             d = data_struct[(tau, 0)]
@@ -184,7 +182,7 @@ def main():
         leg = plt.legend(loc='lower left', ncol=3, frameon=False, title=r"Activity $f_a$", fontsize=8, columnspacing=1.0)
         leg.get_title().set_fontweight('bold')
         
-        # Styling tweaks
+        # Plot formatting
         ax = plt.gca()
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
@@ -228,7 +226,7 @@ def main():
         leg = plt.legend(loc='lower left', ncol=3, frameon=False, title=r"Persistence Time $\tau$", fontsize=8, columnspacing=1.0)
         leg.get_title().set_fontweight('bold')
         
-        # Styling tweaks
+        # Plot formatting
         ax = plt.gca()
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
@@ -238,7 +236,7 @@ def main():
         plt.savefig(os.path.join(script_dir, f'../plots/Plot_FixedAct_{act:g}.pdf'), format='pdf', bbox_inches='tight')
         plt.close()
 
-    print("Success! All PDFs generated.")
+    print("Mode spectrum fitting and plot generation complete.")
 
 if __name__ == "__main__":
     main()

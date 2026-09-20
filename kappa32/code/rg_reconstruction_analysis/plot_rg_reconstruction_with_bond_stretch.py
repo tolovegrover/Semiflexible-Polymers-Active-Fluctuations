@@ -289,7 +289,7 @@ def main():
               frameon=False, fontsize=12)
     #ax.add_artist(leg_style) # Re-add the methodology legend
 
-    # Clean up axes and add a subtle grid for readability
+    # Plot formatting
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.tick_params(direction='in', which='both', bottom=True, top=False, left=True, right=False)

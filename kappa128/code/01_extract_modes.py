@@ -90,10 +90,11 @@ def process_file_tangent_modes(args):
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
+    data_res = os.path.join(script_dir, "../data/tangent_mode_variances.txt")
     output_res = os.path.join(script_dir, "tangent_mode_variances.txt")
     
-    if os.path.exists(output_res):
-        print(f"Found existing {output_res}. Skipping raw dump processing.")
+    if os.path.exists(data_res) or os.path.exists(output_res):
+        print("Found mode variance data. Skipping raw dump processing.")
         return
 
     tasks = []

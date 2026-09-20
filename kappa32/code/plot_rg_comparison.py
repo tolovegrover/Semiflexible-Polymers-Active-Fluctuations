@@ -181,7 +181,7 @@ def main():
     ax.set_ylabel('Radius of Gyration $R_g$')
     ax.set_ylim(top=26)
     
-    # Clean up top/right spines
+    # Plot formatting
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.tick_params(direction='in', top=False, right=False)
@@ -191,7 +191,7 @@ def main():
     plt.savefig(output_pdf, bbox_inches='tight')
     plt.close()
     
-    print(f"Saved professional plot to {output_pdf}")
+    print(f"Plot saved to {output_pdf}")
 
 if __name__ == "__main__":
     main()

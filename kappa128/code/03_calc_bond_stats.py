@@ -59,10 +59,11 @@ def process_file_bondlength(file_path):
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
+    data_res = os.path.join(script_dir, "../data/bondlength_averaged.txt")
     output_res = os.path.join(script_dir, "bondlength_averaged.txt")
     
-    if os.path.exists(output_res):
-        print(f"Found existing {output_res}. Skipping.")
+    if os.path.exists(data_res) or os.path.exists(output_res):
+        print("Found average bond length data. Skipping raw processing.")
         return
 
     results = {}
@@ -132,7 +133,7 @@ def main():
     ax.set_xlabel('Activity $f_a$')
     ax.set_ylabel('Average Bond Length $\\langle b \\rangle$')
     
-    # Clean up top/right spines
+    # Plot formatting
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.tick_params(direction='in', top=False, right=False)
@@ -141,7 +142,7 @@ def main():
     output_pdf = os.path.join(script_dir, "BondLength_vs_Activity.pdf")
     plt.savefig(output_pdf, bbox_inches='tight')
     plt.close()
-    print(f"Saved professional plot to {output_pdf}")
+    print(f"Plot saved to {output_pdf}")
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,6 @@
 # Research Paper: Mode Analysis of Active Polymers
 
-This repository contains the data, analysis pipeline, and publication plots for research on active polymers with varying stiffness ($\kappa=32, 128$).
+This repository contains the data, analysis pipeline, and publication plots for research on active polymers with varying stiffness ($\kappa=32, 128, 256$).
 
 ## Scientific Background & Procedure
 
@@ -34,7 +34,7 @@ The analysis pipeline requires Python 3 and several scientific libraries.
 
 ## Directory Structure
 - `simulation_setup/`: LAMMPS input scripts and cluster submission automation for HPC environments.
-- `kappa32/` & `kappa128/`: System-specific folders.
+- `kappa32/`, `kappa128/`, `kappa256/`: System-specific folders.
     - `data/`: Processed numerical datasets.
     - `plots/`: Final PDF figures.
     - `code/`: Sequential Python scripts and `run_pipeline.sh`.
@@ -80,7 +80,7 @@ The analysis pipeline requires Python 3 and several scientific libraries.
 
 ## How to Reproduce Results
 
-To run the entire analysis pipeline and regenerate all plots for both $\kappa=32$ and $\kappa=128$:
+To run the entire analysis pipeline and regenerate all plots for $\kappa=32, 128, 256$:
 ```bash
 ./reproduce_all.sh
 ```

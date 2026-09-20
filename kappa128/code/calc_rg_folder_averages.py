@@ -42,9 +42,12 @@ def process_file_rg(file_path):
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
+    data_res = os.path.join(script_dir, "../data/rg_averaged_from_folder.txt")
     output_res = os.path.join(script_dir, "rg_averaged_from_folder.txt")
     
-    results = {}
+    if os.path.exists(data_res) or os.path.exists(output_res):
+        print("Found Rg data. Skipping raw processing.")
+        return
     
     for tau in target_taus:
         for act in activities:

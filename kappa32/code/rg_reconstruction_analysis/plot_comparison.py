@@ -225,7 +225,7 @@ def main():
     ]
     leg2 = ax.legend(handles=style_legend_elements, loc='upper right',frameon=True)
 
-    # Clean up axes and add a subtle grid
+    # Plot formatting
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.tick_params(direction='in', which='both', bottom=True, top=False, left=True, right=False)

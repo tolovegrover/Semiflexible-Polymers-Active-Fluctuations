@@ -287,7 +287,7 @@ def main():
         print("Error: No covariance data available.")
         return
 
-    # Filter Taus as requested (remove 0.1)
+    # Exclude passive reference tau = 0.1 from active series
     unique_taus = sorted({k[0] for k in fit_pars.keys()}) if fit_pars else sorted(rg_data['tau'].unique())
     if 0.1 in unique_taus: unique_taus.remove(0.1)
 
@@ -344,10 +344,11 @@ def main():
 
     fig.tight_layout()
     out_path = os.path.join(script_dir, 'Rg_Reconstruction_Discrete_Comparison_t.pdf')
+    out_plots = os.path.join(script_dir, '../../plots/Rg_Reconstruction_Discrete_Comparison_t.pdf')
     fig.savefig(out_path, format='pdf', dpi=600, bbox_inches='tight')
+    fig.savefig(out_plots, format='pdf', dpi=600, bbox_inches='tight')
     plt.close(fig)
-    print(f"\n✅ Analysis Complete. Numerical consistency ensured.")
-    print(f"Saved: {out_path}")
+    print(f"Rg reconstruction complete. Plot saved to: {out_plots}")
 
 if __name__ == "__main__":
     main()

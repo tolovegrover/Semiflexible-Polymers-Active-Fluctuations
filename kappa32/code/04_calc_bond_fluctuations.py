@@ -66,7 +66,7 @@ def iter_timesteps(file_path):
 
 def process_file_bond_fluctuations(args):
     file_path, tau, act = args
-    # Changing to include the 0th mode
+    # Mode index includes p=0 for contour fluctuation
     q = np.arange(0, NUM_MODES + 1)[:, None] 
     j = np.arange(N_segments)[None, :]       
     DCT_matrix = np.cos(np.pi * q * (j + 0.5) / N_segments) * (2.0 / N_segments)
@@ -127,11 +127,12 @@ def process_file_bond_fluctuations(args):
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
+    data_res = os.path.join(script_dir, "../data/bond_fluctuation_variances.txt")
     output_res = os.path.join(script_dir, "bond_fluctuation_variances.txt")
     output_pdf = os.path.join(script_dir, "Bond_Fluctuation_Modes.pdf")
     
-    if os.path.exists(output_res):
-        print(f"Found existing {output_res}. Skipping.")
+    if os.path.exists(data_res) or os.path.exists(output_res):
+        print("Found bond fluctuation variance data. Skipping raw processing.")
         return
 
     tasks = []

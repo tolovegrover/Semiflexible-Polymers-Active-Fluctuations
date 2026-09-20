@@ -55,13 +55,13 @@ def main():
     # Store original df to access mode 0 later
     df_original = df.copy()
 
-    # User requested to plot up to 32 modes for the spectrum
+    # Mode spectrum cutoff
     max_modes = 32
     df = df[(df['Mode'] >= 1) & (df['Mode'] <= max_modes)]
     
     unique_taus = sorted(df['Tau'].unique())
     unique_acts = sorted(df['Activity'].unique())
-    cmap = plt.get_cmap('jet') # Match the colormap used in the reference script
+    cmap = plt.get_cmap('jet') # Colormap for activity levels
     
     # --- 1. Fixed Tau, Varying Activity ---
     # Will generate ../plots/Plot_BondFluc_FixedTau_{tau}.pdf
@@ -78,7 +78,7 @@ def main():
             d = grouped.get_group((tau, 0)).sort_values('Mode')
             plt.plot(d['Mode'], d['Variance'], 'sk-', markerfacecolor='k', markersize=4, label='0')
             
-        # Select active activities to plot to match reference structure
+        # Active drives displayed in fixed-tau plots
         allowed_acts = [8, 16, 32, 64, 96]
         active_acts = [a for a in tau_acts if a > 0 and a in allowed_acts]
         
@@ -275,29 +275,26 @@ def main():
         
         if not df_blen.empty:
             plt.figure(figsize=(fig_width, fig_height))
-            colors = ["#000000", "#0072B2", "#D55E00", "#009E73", "#E69F00", "#CC79A7", "#56B4E9"]
-            markers = ['o', 's', '^', 'D', 'v', '<', '>']
+            colors = ["#0072B2", "#D55E00", "#009E73", "#E69F00", "#CC79A7", "#56B4E9"]
+            markers = ['s', '^', 'D', 'v', '<', '>']
+            plotted_taus = [1.0, 4.0, 7.0, 10.0, 13.0, 19.0]
             
-            # Merge with 0th mode variance to get error bars
-            # std_b_n(t) ~ sqrt(<B_0^2>) / 2 (since B_0 is 2*<b_n(t)>)
+            # Merge with zeroth mode variance: contour fluctuation half-width 0.5 * sqrt(<B_0^2>)
             df_err = pd.merge(df_blen, df_0th, on=['Tau', 'Activity'])
             df_err['err'] = 0.5 * np.sqrt(df_err['Variance'])
             
-            for i, tau in enumerate(sorted(df_err['Tau'].unique())):
-                if tau == 0.1: continue
+            for i, tau in enumerate(plotted_taus):
                 sub_df = df_err[df_err['Tau'] == tau].sort_values(by='Activity')
                 if sub_df.empty: continue
                 
-                c = colors[i % len(colors)]
-                m = markers[i % len(markers)]
+                c = colors[i]
+                m = markers[i]
                 tau_label = f"${tau:g}$"
                 
-                # Plot the solid line and markers
                 plt.plot(sub_df['Activity'], sub_df['b_len'], 
                          marker=m, linestyle='-', color=c, 
                          markeredgecolor='k', markersize=6, linewidth=1.5, label=tau_label)
                 
-                # Use a translucent shaded band for the error instead of caps for a cleaner aesthetic
                 plt.fill_between(sub_df['Activity'], 
                                  sub_df['b_len'] - sub_df['err'], 
                                  sub_df['b_len'] + sub_df['err'], 
@@ -317,7 +314,7 @@ def main():
             plt.savefig(os.path.join(script_dir, "../plots/Plot_AvgBondLength_with_FluctuationErr_vs_Act.pdf"), format='pdf', bbox_inches='tight')
             plt.close()
 
-    print("Successfully generated all plots based on plot_and_fit_modes.py styling.")
+    print("Bond metric plots generated successfully.")
 
 if __name__ == "__main__":
     main()
